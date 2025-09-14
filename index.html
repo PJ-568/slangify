@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>口僻转换器</title>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E👄%3C/text%3E%3C/svg%3E"
+    />
+  </head>
+  <body>
+    <h1>口僻转换器</h1>
+    <div>
+      <textarea
+        id="input"
+        rows="5"
+        cols="50"
+        placeholder="输入文本..."
+      ></textarea>
+    </div>
+    <div>
+      <button onclick="convertToSlang()">转换为口僻</button>
+      <button onclick="convertFromSlang()">从口僻转换</button>
+    </div>
+    <div>
+      <textarea id="output" rows="5" cols="50" readonly></textarea>
+    </div>
+
+    <script>
+      function convertToSlang() {
+        const input = document.getElementById("input").value;
+        let output = input;
+
+        // 在标点符号前插入"喵"
+        output = output.replace(
+          /([，。！？；：“"”‘'’（）【】《》、])/g,
+          "喵$1"
+        );
+
+        // 在每句话结尾附加随机数量的 w 或单个 owo，保持原有标点符号
+        const sentencesWithPunctuation = output.split(/([。！？])/);
+        output = "";
+        for (let i = 0; i < sentencesWithPunctuation.length - 1; i += 2) {
+          const sentence = sentencesWithPunctuation[i];
+          const punctuation = sentencesWithPunctuation[i + 1];
+
+          if (sentence.trim() && punctuation) {
+            const suffix =
+              Math.random() > 0.5
+                ? "owo"
+                : "w".repeat(Math.floor(Math.random() * 5) + 1);
+            output += sentence + punctuation + suffix;
+          }
+        }
+        if (
+          sentencesWithPunctuation[sentencesWithPunctuation.length - 1].trim()
+        ) {
+          output +=
+            sentencesWithPunctuation[sentencesWithPunctuation.length - 1];
+        }
+
+        // 应用最后的格式
+        output = `（${output}呀）`;
+
+        document.getElementById("output").value = output;
+      }
+
+      function convertFromSlang() {
+        const input = document.getElementById("input").value;
+        let output = input;
+
+        // 移除最后的格式
+        if (output.startsWith("（") && output.endsWith("呀）")) {
+          output = output.substring(1, output.length - 2);
+        }
+
+        // 移除句子结尾的 w 或 owo，支持所有标点符号
+        output = output.replace(/([。！？])(owo|w+)/g, "$1");
+
+        // 移除标点符号前的"喵"
+        output = output.replace(
+          /喵([，。！？；：“"”‘'’（）【】《》、])/g,
+          "$1"
+        );
+
+        document.getElementById("output").value = output;
+      }
+    </script>
+  </body>
+</html>
